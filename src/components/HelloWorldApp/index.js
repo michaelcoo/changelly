@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, Alert, AppRegistry, Button, StyleSheet, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 class HelloWorldApp extends Component {
   render() {
@@ -12,4 +12,4 @@ class HelloWorldApp extends Component {
   }
 }
 
-export default HelloWorldApp;
+export default HelloWorldApp; //返回组件，使用 export default 外部引用使用时不需要加入大括号 {}

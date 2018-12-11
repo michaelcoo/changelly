@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import { Text, Alert, AppRegistry, Button, StyleSheet, View } from 'react-native';
-import  HelloWorldApp from './components/HelloWorldApp'
+import  HelloWorldApp from './components/HelloWorldApp' //导入HelloWorldApp组件
 
 export default class App extends Component {
   render() {
     return (
-      <HelloWorldApp/>
+      <HelloWorldApp/> //使用组件
     );
   }
 }
