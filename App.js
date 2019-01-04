@@ -19,15 +19,39 @@ const getCurrencies = {
   "params": {}
 };
 
-const getMinAmount = {
-  "jsonrpc": "2.0",
-  "id": "test",
-  "method": "getMinAmount",
-  "params": {
-    "from": "ltc",
-    "to": "eth",
-  }
+
+// const getMinAmount = {
+//   "jsonrpc": "2.0",
+//   "id": "test",
+//   "method": "getMinAmount",
+//   "params": {
+//     "from": "ltc",
+//     "to": "eth",
+//   }
+// };
+
+// const getMinAmount = {
+//   jsonrpc: '2.0',
+//   id: 'test',
+//   method: 'getMinAmount',
+//   params: {
+//     from: 'ltc',
+//     to: 'eth',
+//   },
+// };
+
+export const getMinAmount = (from, to) => {
+  return {
+    jsonrpc: '2.0',
+    id: 'test',
+    method: 'getMinAmount',
+    params: {
+      from,
+      to,
+    },
+  };
 };
+
 
 const API_KEY = '82c7bfc5dff74eb9bbcf830b9e5a8bfb';
 const API_SECRET = 'eac0656863098810cbe2c3a010a5ac6f117f8b1af13ac99117d804aa5a371089';
@@ -36,9 +60,43 @@ const adders = "18NMoucE2Nmma3xnLXvWq5aUMMDBnQfMTg";
 
 // const sign = Base64.stringify(hmacSHA512(getCurrencies,API_SECRET));
 
-const sign = crypto.HmacSHA512(JSON.stringify(getCurrencies), API_SECRET).toString();
+// const sign = crypto.HmacSHA512(JSON.stringify(getCurrencies), API_SECRET).toString();
 //
-console.log("aaa:   "+ sign);
+// console.log("aaa:   "+ sign);
+
+
+
+function get(param){
+  return new Promise(function (resolve,reject) {
+    const sign = crypto.HmacSHA512(JSON.stringify(param), API_SECRET).toString();
+    console.log("aaa:   "+ sign);
+
+    console.log("into get..")
+    fetch(CHANGELLY_URL,{
+      method: "POST",
+      headers: {
+        'api-key': API_KEY,
+        'sign': sign,
+        'Content-type': 'application/json'},
+      body: JSON.stringify(param)
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        // resolve(responseJson.result)
+        console.log(responseJson);
+        this.setState({
+          data: this.state.data.concat(responseJson.result.toString()),
+          loaded: true,
+        });
+        resolve(responseJson.result.toString());
+      })
+      .catch((error) => {
+        console.error(error);
+        reject(error);
+      });
+  });
+}
+
 
 
 export default class SampleAppMovies extends Component{
@@ -52,15 +110,24 @@ export default class SampleAppMovies extends Component{
       exchangeAmount: 0,
     };
 
-    this.getChangellyDate = this.getChangellyDate.bind(this);
+    // this.getChangellyDate = this.getChangellyDate.bind(this);
   }
 
   componentDidMount() {
-    this.getChangellyDate(getCurrencies);
+    this.getChangellyDate(getMinAmount('ltc','eth'));
+    // get(getCurrencies).then(function (mess) {
+    //   console.log("ttt........",mess);
+    // }).catch(function (err) {
+    //   console.log("fdafsd...",err)
+    // });
   }
 
 
   getChangellyDate(param) {
+
+    const sign = crypto.HmacSHA512(JSON.stringify(param), API_SECRET).toString();
+    console.log("aaa:   "+ sign);
+
     console.log("into getChangellyDate..")
     fetch(CHANGELLY_URL,{
       method: "POST",
@@ -84,7 +151,8 @@ export default class SampleAppMovies extends Component{
       });
   }
 
-  render() {
+
+    render() {
     if (!this.state.loaded) {
       return this.renderLoadingView();
     }
